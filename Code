@@ -1,0 +1,70 @@
+// Link to problem statement: https://practice.geeksforgeeks.org/contest/gfg-weekly-coding-contest-110/problems
+
+class Solution {
+    static int mod = (int)1e9+7;
+    public static int find(int curOpen,int ind,int lastChar,int cons,int n,String s,int k,int[][][][] dp){
+        if(curOpen<0)return 0;
+        if(ind==n){
+            return curOpen==0?1:0;
+        }
+        if(dp[curOpen][ind][lastChar][cons]!=-1)return dp[curOpen][ind][lastChar][cons];
+        int res = 0;
+        int curChar = -1;
+        if(s.charAt(ind)=='('){
+            curChar = 0;
+            if(curChar==lastChar && cons<k){
+                res = res+(find(curOpen+1,ind+1,lastChar,cons+1,n,s,k,dp))%mod;
+            }
+            else if(curChar!=lastChar){
+                res = res+(find(curOpen+1,ind+1,0,1,n,s,k,dp))%mod;
+            }
+            else{
+                return 0;
+            }
+        }
+        else if(s.charAt(ind)==')'){
+            curChar = 1;
+            if(curChar==lastChar && cons<k){
+                res = res+(find(curOpen-1,ind+1,lastChar,cons+1,n,s,k,dp))%mod;
+            }
+            else if(curChar!=lastChar){
+                res = res+(find(curOpen-1,ind+1,1,1,n,s,k,dp))%mod;
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            curChar = 0;
+            if(curChar==lastChar && cons<k){
+                res = res+(find(curOpen+1,ind+1,lastChar,cons+1,n,s,k,dp))%mod;
+            }
+            else if(curChar!=lastChar){
+                res = res+(find(curOpen+1,ind+1,0,1,n,s,k,dp))%mod;
+            }
+            curChar = 1;
+            if(curChar==lastChar && cons<k){
+                res = res+ (find(curOpen-1,ind+1,lastChar,cons+1,n,s,k,dp))%mod;
+            }
+            else if(curChar!=lastChar){
+                res = res + (find(curOpen-1,ind+1,1,1,n,s,k,dp))%mod;
+            }
+        }
+        return dp[curOpen][ind][lastChar][cons]=res%mod;
+    }
+    public static int countStrings(int n, String s, int k) {
+        // code here
+        if(n%2==1)return 0;
+        int max = 2*100+5;
+        int dp[][][][] = new int[max][max][3][11];
+        for(int[][][] a: dp){
+            for(int[][] b: a){
+                for(int[] c: b){
+                    Arrays.fill(c,-1);
+                }
+            }
+        }
+        return find(0,0,2,0,n,s,k,dp);
+    }
+}
+        
